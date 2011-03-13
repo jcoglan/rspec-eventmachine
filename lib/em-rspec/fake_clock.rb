@@ -1,5 +1,3 @@
-require 'set'
-
 module EM::RSpec
   module FakeClock
     

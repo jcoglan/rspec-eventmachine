@@ -1,5 +1,3 @@
-require 'eventmachine'
-require 'rspec/mocks'
 require File.dirname(__FILE__) + '/../lib/em-rspec'
 
 Thread.new { EM.run }
