@@ -48,7 +48,7 @@ module EM::RSpec
       end
       
       def sync
-        sleep 0 while @__running_steps__
+        Thread.pass while @__running_steps__
       end
     end
     
