@@ -34,43 +34,41 @@ describe EM::RSpec::AsyncSteps do
   describe :sync do
     describe "with no steps pending" do
       it "does not block" do
-        @steps.sync
         result.should == nil
       end
     end
     
     describe "with a pending step" do
-      before { @steps.multiply 7, 8 }
+      before { EM.run { @steps.multiply 7, 8 } }
       
       it "waits for the step to complete" do
-        result.should == nil
-        @steps.sync
         result.should == 56
       end
     end
     
     describe "with many pending steps" do
       before do
-        @steps.multiply 7, 8
-        @steps.subtract 5
+        EM.run {
+          @steps.multiply 7, 8
+          @steps.subtract 5
+        }
       end
       
       it "waits for all the steps to complete" do
-        result.should == nil
-        @steps.sync
         result.should == 51
       end
     end
     
     describe "with FakeClock activated" do
       include EM::RSpec::FakeClock
-      before { clock.stub }
-      after { @steps.sync && clock.reset }
+      after { clock.reset }
       
       it "waits for all the steps to complete" do
         @steps.instance_eval { @result = 11 }
-        @steps.check_result(11)
-        @steps.sync
+        EM.run {
+          clock.stub
+          @steps.check_result(11)
+        }
         @steps.instance_eval { @checked }.should == true
       end
     end
