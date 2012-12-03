@@ -44,6 +44,18 @@ module EM::RSpec
         @__step_queue__ = []
         __run_next_step__
       end
+      
+      def verify_mocks_for_rspec
+        EM.reactor_running? ? false : super
+      rescue Object => e
+        @example.set_exception(e) if @example
+      end
+      
+      def teardown_mocks_for_rspec
+        EM.reactor_running? ? false : super
+      rescue Object => e
+        @example.set_exception(e) if @example
+      end
     end
     
   end
@@ -58,6 +70,8 @@ class RSpec::Core::Example
     def #{hook_method}(*args, &block)
       if @example_group_instance.is_a?(EM::RSpec::AsyncSteps::Scheduler)
         EM.run { synchronous_run(*args, &block) }
+        @example_group_instance.verify_mocks_for_rspec
+        @example_group_instance.teardown_mocks_for_rspec
       else
         synchronous_run(*args, &block)
       end
