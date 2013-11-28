@@ -21,10 +21,10 @@ tests with async logic, and `FakeClock` stubs out timer methods.
 ### `AsyncSteps`
 
 To keep async tests clean, it helps to implement all the separate logical steps
-in them as separate functions. Using `AsyncStep`, you write a module containing
-definitions of all your test steps, where each method takes a callback. You then
-mix this module into your tests, and you can use the methods without callbacks
-to write terse, flat tests.
+in them as separate functions. Using `AsyncSteps`, you write a module
+containing definitions of all your test steps, where each method takes a
+callback. You then mix this module into your tests, and you can use the methods
+without callbacks to write terse, flat tests.
 
 ```rb
 require "rspec/em"
