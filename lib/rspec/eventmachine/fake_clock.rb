@@ -1,4 +1,4 @@
-module EM::RSpec
+module RSpec::EM
   module FakeClock
     
     def clock
@@ -11,7 +11,7 @@ module EM::RSpec
       def self.stub
         reset
         STUBBED_METHODS.each do |method_name|
-          EM.stub(method_name, &FakeClock.method(method_name))
+          EventMachine.stub(method_name, &FakeClock.method(method_name))
         end
         Time.stub(:now, &FakeClock.method(:now))
       end

@@ -1,7 +1,7 @@
 require "spec_helper"
 
-describe EM::RSpec::AsyncSteps do
-  StepModule = EM::RSpec.async_steps do
+describe RSpec::EM::AsyncSteps do
+  StepModule = RSpec::EM.async_steps do
     def multiply(x, y, &resume)
       EM.add_timer(0.1) do
         @result = x * y
@@ -60,7 +60,7 @@ describe EM::RSpec::AsyncSteps do
     end
     
     describe "with FakeClock activated" do
-      include EM::RSpec::FakeClock
+      include RSpec::EM::FakeClock
       after { clock.reset }
       
       it "waits for all the steps to complete" do
@@ -81,12 +81,6 @@ describe EM::RSpec::AsyncSteps do
       multiply 6, 3
       subtract 7
       check_result 11
-    end
-    
-    # This should fail so we know RSpec reports async errors
-    it "fails" do
-      multiply 9, 4
-      check_result 5
     end
   end
 end

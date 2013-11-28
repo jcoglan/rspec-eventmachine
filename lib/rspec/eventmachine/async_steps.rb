@@ -1,4 +1,4 @@
-module EM::RSpec
+module RSpec::EM
   class AsyncSteps < Module
     
     def included(klass)
@@ -7,11 +7,13 @@ module EM::RSpec
     
     def method_added(method_name)
       async_method_name = "async_#{method_name}"
+
       return if instance_methods(false).map { |m| m.to_s }.include?(async_method_name) or
                 method_name.to_s =~ /^async_/
       
       module_eval <<-RUBY
         alias :#{async_method_name} :#{method_name}
+
         def #{method_name}(*args)
           __enqueue__([#{async_method_name.inspect}] + args)
         end
@@ -24,18 +26,18 @@ module EM::RSpec
         @__step_queue__ << args
         return if @__running_steps__
         @__running_steps__ = true
-        EM.next_tick { __run_next_step__ }
+        EventMachine.next_tick { __run_next_step__ }
       end
       
       def __run_next_step__
         step = @__step_queue__.shift
-        return EM.stop unless step
+        return EventMachine.stop unless step
         
         method_name, args = step.shift, step
         begin
           method(method_name).call(*args) { __run_next_step__ }
-        rescue Object => e
-          @example.set_exception(e) if @example
+        rescue Object => error
+          @example.set_exception(error) if @example
           __end_steps__
         end
       end
@@ -46,15 +48,15 @@ module EM::RSpec
       end
       
       def verify_mocks_for_rspec
-        EM.reactor_running? ? false : super
-      rescue Object => e
-        @example.set_exception(e) if @example
+        EventMachine.reactor_running? ? false : super
+      rescue Object => error
+        @example.set_exception(error) if @example
       end
       
       def teardown_mocks_for_rspec
-        EM.reactor_running? ? false : super
-      rescue Object => e
-        @example.set_exception(e) if @example
+        EventMachine.reactor_running? ? false : super
+      rescue Object => error
+        @example.set_exception(error) if @example
       end
     end
     
@@ -68,8 +70,8 @@ class RSpec::Core::Example
     alias :synchronous_run :#{hook_method}
     
     def #{hook_method}(*args, &block)
-      if @example_group_instance.is_a?(EM::RSpec::AsyncSteps::Scheduler)
-        EM.run { synchronous_run(*args, &block) }
+      if @example_group_instance.is_a?(RSpec::EM::AsyncSteps::Scheduler)
+        EventMachine.run { synchronous_run(*args, &block) }
         @example_group_instance.verify_mocks_for_rspec
         @example_group_instance.teardown_mocks_for_rspec
       else

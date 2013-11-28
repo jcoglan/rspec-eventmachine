@@ -1,7 +1,7 @@
 require "spec_helper"
 
-describe EM::RSpec::FakeClock do
-  include EM::RSpec::FakeClock
+describe RSpec::EM::FakeClock do
+  include RSpec::EM::FakeClock
   before { clock.stub }
   after { clock.reset }
   
