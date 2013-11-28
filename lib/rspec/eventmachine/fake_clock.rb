@@ -11,9 +11,9 @@ module RSpec::EM
       def self.stub
         reset
         STUBBED_METHODS.each do |method_name|
-          EventMachine.stub(method_name, &FakeClock.method(method_name))
+          RSpec::Mocks.allow_message(EventMachine, method_name, &FakeClock.method(method_name))
         end
-        Time.stub(:now, &FakeClock.method(:now))
+        RSpec::Mocks.allow_message(Time, :now, &FakeClock.method(:now))
       end
       
       def self.reset
