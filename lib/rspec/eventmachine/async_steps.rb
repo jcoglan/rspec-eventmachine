@@ -36,9 +36,9 @@ module RSpec::EM
         method_name, args = step.shift, step
         begin
           method(method_name).call(*args) { __run_next_step__ }
-        rescue Object => error
-          @example.set_exception(error) if @example
+        rescue Object
           __end_steps__
+          raise
         end
       end
       
@@ -64,8 +64,8 @@ module RSpec::EM
 end
 
 class RSpec::Core::Example
-  hook_method = %w[with_around_hooks with_around_each_hooks].find { |m| instance_method(m) rescue nil }
-  
+  hook_method = %w[with_around_hooks with_around_each_hooks with_around_example_hooks].find { |m| instance_method(m) rescue nil }
+
   class_eval %Q{
     alias :synchronous_run :#{hook_method}
     
