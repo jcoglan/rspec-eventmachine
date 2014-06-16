@@ -4,6 +4,8 @@ rvm:
   - 1.9.2
   - 1.9.3
   - 2.0.0
+  - 2.1.0
+  - 2.1.2
   - jruby-18mode
   - jruby-19mode
 
@@ -12,6 +14,7 @@ gemfile:
   - gemfiles/Gemfile.rspec-2.99.x
   - gemfiles/Gemfile.rspec-3.x
   - gemfiles/Gemfile.rspec-edge
+
 matrix:
   allow_failures:
     - gemfile: gemfiles/Gemfile.rspec-edge
