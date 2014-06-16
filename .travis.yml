@@ -7,5 +7,13 @@ rvm:
   - jruby-18mode
   - jruby-19mode
 
-script: bundle exec rspec -c spec/
+gemfile:
+  - gemfiles/Gemfile.rspec-2.14.x
+  - gemfiles/Gemfile.rspec-2.99.x
+  - gemfiles/Gemfile.rspec-3.x
+  - gemfiles/Gemfile.rspec-edge
+matrix:
+  allow_failures:
+    - gemfile: gemfiles/Gemfile.rspec-edge
 
+script: bundle exec rspec -c spec/

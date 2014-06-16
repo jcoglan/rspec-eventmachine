@@ -36,9 +36,9 @@ module RSpec::EM
         method_name, args = step.shift, step
         begin
           method(method_name).call(*args) { __run_next_step__ }
-        rescue Object => error
-          @example.set_exception(error) if @example
+        rescue Object
           __end_steps__
+          raise
         end
       end
       
@@ -46,38 +46,37 @@ module RSpec::EM
         @__step_queue__ = []
         __run_next_step__
       end
-      
-      def verify_mocks_for_rspec
-        EventMachine.reactor_running? ? false : super
-      rescue Object => error
-        @example.set_exception(error) if @example
-      end
-      
-      def teardown_mocks_for_rspec
-        EventMachine.reactor_running? ? false : super
-      rescue Object => error
-        @example.set_exception(error) if @example
-      end
+
     end
     
   end
 end
 
 class RSpec::Core::Example
-  hook_method = %w[with_around_hooks with_around_each_hooks].find { |m| instance_method(m) rescue nil }
-  
-  class_eval %Q{
+  hook_method = %w[with_around_hooks with_around_each_hooks with_around_example_hooks].find { |m| instance_method(m) rescue nil }
+  after_method = %w[run_after_each run_after_example].find { |m| instance_method(m) rescue nil }
+
+  class_eval <<-end_eval, __FILE__, __LINE__ + 1
     alias :synchronous_run :#{hook_method}
     
     def #{hook_method}(*args, &block)
       if @example_group_instance.is_a?(RSpec::EM::AsyncSteps::Scheduler)
-        EventMachine.run { synchronous_run(*args, &block) }
-        @example_group_instance.verify_mocks_for_rspec
-        @example_group_instance.teardown_mocks_for_rspec
+        begin
+          EventMachine.run { synchronous_run(*args, &block) }
+        ensure
+          #{after_method}
+        end
       else
         synchronous_run(*args, &block)
       end
     end
-  }
-end
 
+    alias :run_after_orig :#{after_method}
+
+    def #{after_method}
+      run_after_orig unless EventMachine.reactor_running?
+    end
+
+  end_eval
+
+end
