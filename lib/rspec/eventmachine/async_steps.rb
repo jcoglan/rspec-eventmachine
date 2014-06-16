@@ -49,14 +49,10 @@ module RSpec::EM
       
       def verify_mocks_for_rspec
         EventMachine.reactor_running? ? false : super
-      rescue Object => error
-        @example.set_exception(error) if @example
       end
       
       def teardown_mocks_for_rspec
         EventMachine.reactor_running? ? false : super
-      rescue Object => error
-        @example.set_exception(error) if @example
       end
     end
     
@@ -80,4 +76,3 @@ class RSpec::Core::Example
     end
   }
 end
-
