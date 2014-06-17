@@ -10,8 +10,8 @@ module RSpec::EM
 
       return if instance_methods(false).map { |m| m.to_s }.include?(async_method_name) or
                 method_name.to_s =~ /^async_/
-      
-      module_eval <<-RUBY
+
+      module_eval <<-RUBY, __FILE__, __LINE__ + 1
         alias :#{async_method_name} :#{method_name}
 
         def #{method_name}(*args)
@@ -62,7 +62,7 @@ end
 class RSpec::Core::Example
   hook_method = %w[with_around_hooks with_around_each_hooks with_around_example_hooks].find { |m| instance_method(m) rescue nil }
 
-  class_eval %Q{
+  class_eval <<-RUBY, __FILE__, __LINE__ + 1
     alias :synchronous_run :#{hook_method}
     
     def #{hook_method}(*args, &block)
@@ -74,5 +74,5 @@ class RSpec::Core::Example
         synchronous_run(*args, &block)
       end
     end
-  }
+  RUBY
 end
