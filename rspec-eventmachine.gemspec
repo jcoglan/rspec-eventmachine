@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = 'rspec-eventmachine'
-  s.version           = '0.1.1'
+  s.version           = '0.2.0'
   s.summary           = 'RSpec extensions for testing EventMachine code'
   s.author            = 'James Coglan'
   s.email             = 'jcoglan@gmail.com'
