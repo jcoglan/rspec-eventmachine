@@ -85,12 +85,20 @@ module RSpec::EM
       timeout
     end
     
-    def self.add_timer(seconds, proc = nil, &block)
-      timer(block || proc, seconds, false)
+    def self.add_timer(*args, &block)
+      seconds = args.shift
+      code = args.shift || block
+      if code
+        timer(code, seconds, false)
+      end
     end
     
-    def self.add_periodic_timer(seconds, proc = nil, &block)
-      timer(block || proc, seconds, true)
+    def self.add_periodic_timer(*args, &block)
+      seconds = args.shift
+      code = args.shift || block
+      if code
+        timer(code, seconds, true)
+      end
     end
     
     def self.cancel_timer(timeout)
