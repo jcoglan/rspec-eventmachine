@@ -24,9 +24,13 @@ module RSpec::EM
       def __enqueue__(args)
         @__step_queue__ ||= []
         @__step_queue__ << args
-        return if @__running_steps__
+        return if __running_steps__
         @__running_steps__ = true
         EventMachine.next_tick { __run_next_step__ }
+      end
+
+      def __running_steps__
+        @__running_steps__ ||= false
       end
       
       def __run_next_step__
