@@ -82,6 +82,13 @@ describe RSpec::EM::AsyncSteps do
       subtract 7
       check_result 11
     end
+
+    it "raises if spec is interrupted" do
+      multiply 6, 3
+      subtract 7
+      check_result 25 # wrong value
+      EM.stop
+    end
   end
 end
 
