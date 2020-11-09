@@ -89,6 +89,10 @@ describe RSpec::EM::AsyncSteps do
       check_result 25 # wrong value
       EM.stop
     end
+
+    it "do not raise if interrupted with no queue" do
+      EM.stop
+    end
   end
 end
 

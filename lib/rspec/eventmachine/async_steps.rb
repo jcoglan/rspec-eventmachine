@@ -56,7 +56,7 @@ module RSpec::EM
       end
 
       def verify_step_queue
-        unless @__step_queue__&.empty?
+        if @__step_queue__&.size&.positive?
           raise RuntimeError.new("EventMachine terminated before the end of the spec. #{@__step_queue__.size} async steps left to execute: #{@__step_queue__.map(&:first).join(', ')}")
         end
       end
