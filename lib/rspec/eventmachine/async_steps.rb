@@ -69,10 +69,11 @@ class RSpec::Core::Example
       if @example_group_instance.is_a?(RSpec::EM::AsyncSteps::Scheduler)
         EventMachine.run { synchronous_run(*args, &block) }
         @example_group_instance.verify_mocks_for_rspec
-        @example_group_instance.teardown_mocks_for_rspec
       else
         synchronous_run(*args, &block)
       end
+    ensure
+      @example_group_instance.teardown_mocks_for_rspec if @example_group_instance.is_a?(RSpec::EM::AsyncSteps::Scheduler)
     end
   RUBY
 end

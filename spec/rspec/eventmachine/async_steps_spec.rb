@@ -82,6 +82,17 @@ describe RSpec::EM::AsyncSteps do
       subtract 7
       check_result 11
     end
+
+    it "leaks a mock" do
+      allow(Object).to receive(:toto) { puts 'toto' }   
+      EM.add_timer(0.1) {
+        expect(1).to eq(2)
+      }
+    end
+
+    it "has leaked mock" do
+      multiply 6, 3
+      Object.toto
+    end
   end
 end
-
