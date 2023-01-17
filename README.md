@@ -45,7 +45,7 @@ MathSteps = RSpec::EM.async_steps do
   end
 
   def check_result(n, &callback)
-    @result.should == n
+    expect(@result).to eq(n)
     callback.call
   end
 end
@@ -89,9 +89,9 @@ describe "Math" do
     EM.add_timer(3) { value *= 2 }
 
     clock.tick(2)
-    value.should == 3
+    expect(value).to eq(3)
     clock.tick(2)
-    value.should == 6
+    expect(value).to eq(6)
   end
 end
 ```
